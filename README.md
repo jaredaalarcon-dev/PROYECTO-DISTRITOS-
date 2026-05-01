@@ -17,7 +17,7 @@ Está desarrollado utilizando tecnologías modernas y buenas prácticas de desar
 * HTML
 * CSS
 * JavaScript
-* [Agrega aquí otras tecnologías si usaste, como React, Node.js, etc.]
+
 
 ---
 
@@ -54,7 +54,7 @@ cd PROYECTO-DISTRITOS-
 
 ## 🖥️ Capturas de pantalla
 
-*Agrega aquí imágenes de tu proyecto*
+
 
 ---
 
