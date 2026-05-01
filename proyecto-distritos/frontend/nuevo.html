@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nuevo Distrito</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:        #0f0f11;
+      --surface:   #17171b;
+      --border:    #2a2a32;
+      --accent:    #e8c848;
+      --accent2:   #d4a830;
+      --text:      #e8e6e1;
+      --muted:     #7a7880;
+      --danger:    #e05252;
+      --success:   #52c278;
+      --radius:    6px;
+      --font-body: 'DM Sans', sans-serif;
+      --font-head: 'DM Serif Display', serif;
+      --font-mono: 'DM Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 460px;
+    }
+    .card-eyebrow {
+      font-family: var(--font-mono);
+      font-size: .7rem;
+      letter-spacing: .15em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: .5rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .card-eyebrow a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .card-eyebrow a:hover { color: var(--text); }
+    h1 {
+      font-family: var(--font-head);
+      font-size: 2.2rem;
+      margin-bottom: 2rem;
+      line-height: 1.1;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+      margin-bottom: 1.25rem;
+    }
+    .form-group label {
+      font-size: .8rem;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      letter-spacing: .05em;
+    }
+    .form-group input {
+      padding: .7rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: .95rem;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .form-group input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(232,200,72,.12);
+    }
+    .form-group input.invalid { border-color: var(--danger); }
+    .error-msg { font-size: .78rem; color: var(--danger); }
+    .helper-msg { font-size: .78rem; color: var(--muted); }
+    .form-actions {
+      display: flex;
+      gap: .75rem;
+      margin-top: 2rem;
+    }
+    .btn-cancel {
+      flex: 1;
+      padding: .7rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: .9rem;
+      transition: all .15s;
+      text-decoration: none;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-cancel:hover { border-color: var(--text); color: var(--text); }
+    .btn-submit {
+      flex: 2;
+      padding: .7rem;
+      background: var(--accent);
+      border: none;
+      color: #111;
+      font-weight: 700;
+      font-family: var(--font-body);
+      font-size: .9rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background .15s, transform .15s;
+    }
+    .btn-submit:hover { background: var(--accent2); transform: translateY(-1px); }
+    .btn-submit:disabled { opacity: .5; cursor: default; transform: none; }
+    #globalError {
+      margin-bottom: 1rem;
+      padding: .65rem 1rem;
+      background: rgba(224,82,82,.1);
+      border: 1px solid rgba(224,82,82,.3);
+      border-radius: var(--radius);
+      font-size: .85rem;
+      color: var(--danger);
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-eyebrow">
+      <a href="index.html">← Distritos</a>
+      <span>/</span>
+      <span>Nuevo registro</span>
+    </div>
+    <h1>Nuevo<br/>Distrito</h1>
+
+    <div id="globalError"></div>
+
+    <div class="form-group">
+      <label for="nom_dis">Nombre del Distrito</label>
+      <input
+        type="text"
+        id="nom_dis"
+        placeholder="Ej: San Isidro"
+        maxlength="120"
+        autocomplete="off"
+      />
+      <span class="error-msg" id="errNom"></span>
+    </div>
+
+    <div class="form-group">
+      <label for="cod_postal">Código Postal</label>
+      <input
+        type="text"
+        id="cod_postal"
+        placeholder="Ej: LIM27"
+        maxlength="10"
+        autocomplete="off"
+      />
+      <span class="error-msg" id="errCod"></span>
+      <span class="helper-msg">Máximo 10 caracteres</span>
+    </div>
+
+    <div class="form-actions">
+      <a href="index.html" class="btn-cancel">Cancelar</a>
+      <button class="btn-submit" id="btnGuardar">Guardar Distrito</button>
+    </div>
+  </div>
+
+  <script type="module" src="./src/nuevo.js"></script>
+</body>
+</html>

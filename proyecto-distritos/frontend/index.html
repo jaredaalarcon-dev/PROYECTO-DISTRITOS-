@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Distritos — Gestión</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Variables ─────────────────────────────────────────────────── */
+    :root {
+      --bg:        #0f0f11;
+      --surface:   #17171b;
+      --border:    #2a2a32;
+      --accent:    #e8c848;
+      --accent2:   #d4a830;
+      --text:      #e8e6e1;
+      --muted:     #7a7880;
+      --danger:    #e05252;
+      --success:   #52c278;
+      --radius:    6px;
+      --font-body: 'DM Sans', sans-serif;
+      --font-head: 'DM Serif Display', serif;
+      --font-mono: 'DM Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    /* ── Layout ─────────────────────────────────────────────────────── */
+    .container { max-width: 1000px; margin: 0 auto; }
+
+    /* ── Header ─────────────────────────────────────────────────────── */
+    .header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .header-left { display: flex; flex-direction: column; gap: .25rem; }
+    .header-eyebrow {
+      font-family: var(--font-mono);
+      font-size: .7rem;
+      letter-spacing: .15em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+    .header-title {
+      font-family: var(--font-head);
+      font-size: 2.4rem;
+      line-height: 1;
+      color: var(--text);
+    }
+    .btn-nuevo {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .6rem 1.2rem;
+      background: var(--accent);
+      color: #111;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: .85rem;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .2s, transform .15s;
+    }
+    .btn-nuevo:hover { background: var(--accent2); transform: translateY(-1px); }
+
+    /* ── Search bar ─────────────────────────────────────────────────── */
+    .search-bar {
+      display: flex;
+      gap: .75rem;
+      margin-bottom: 1.5rem;
+    }
+    .search-bar input {
+      flex: 1;
+      padding: .65rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: .9rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .search-bar input:focus { border-color: var(--accent); }
+    .search-bar input::placeholder { color: var(--muted); }
+
+    /* ── Table ──────────────────────────────────────────────────────── */
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: #1e1e24; border-bottom: 1px solid var(--border); }
+    th {
+      padding: .85rem 1rem;
+      text-align: left;
+      font-family: var(--font-mono);
+      font-size: .72rem;
+      letter-spacing: .1em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background .15s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(232,200,72,.04); }
+    td { padding: .8rem 1rem; font-size: .88rem; }
+    td.id-cell {
+      font-family: var(--font-mono);
+      font-size: .8rem;
+      color: var(--muted);
+      width: 60px;
+    }
+    td.cod-cell {
+      font-family: var(--font-mono);
+      font-size: .82rem;
+      color: var(--accent);
+    }
+
+    /* ── Action buttons ─────────────────────────────────────────────── */
+    .actions { display: flex; gap: .5rem; }
+    .btn-action {
+      padding: .3rem .7rem;
+      font-size: .78rem;
+      font-family: var(--font-body);
+      font-weight: 500;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .btn-edit {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--text);
+    }
+    .btn-edit:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-delete {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--muted);
+    }
+    .btn-delete:hover { border-color: var(--danger); color: var(--danger); }
+
+    /* ── Pagination ─────────────────────────────────────────────────── */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .pagination-info {
+      font-family: var(--font-mono);
+      font-size: .78rem;
+      color: var(--muted);
+    }
+    .pagination-controls { display: flex; gap: .4rem; }
+    .page-btn {
+      min-width: 34px;
+      height: 34px;
+      padding: 0 .6rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: .8rem;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .page-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+    .page-btn.active { background: var(--accent); border-color: var(--accent); color: #111; font-weight: 600; }
+    .page-btn:disabled { opacity: .35; cursor: default; }
+
+    /* ── States ─────────────────────────────────────────────────────── */
+    .state-row td {
+      text-align: center;
+      padding: 3rem;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: .85rem;
+    }
+    .loading-dot::after {
+      content: '...';
+      animation: dots 1s steps(4, end) infinite;
+    }
+    @keyframes dots {
+      0%,20%  { content: '.'; }
+      40%     { content: '..'; }
+      60%,100%{ content: '...'; }
+    }
+
+    /* ── Toast ───────────────────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      padding: .75rem 1.2rem;
+      border-radius: var(--radius);
+      font-size: .85rem;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity .25s, transform .25s;
+      z-index: 999;
+      pointer-events: none;
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+    #toast.success { background: var(--success); color: #0a2015; }
+    #toast.error   { background: var(--danger);  color: #fff; }
+
+    /* ── Modal ───────────────────────────────────────────────────────── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.65);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 420px;
+    }
+    .modal h2 {
+      font-family: var(--font-head);
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .form-group { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1rem; }
+    .form-group label { font-size: .8rem; color: var(--muted); font-family: var(--font-mono); }
+    .form-group input {
+      padding: .6rem .9rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: .9rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .form-group input:focus { border-color: var(--accent); }
+    .modal-actions { display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1.5rem; }
+    .btn-cancel {
+      padding: .55rem 1rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: border-color .15s;
+    }
+    .btn-cancel:hover { border-color: var(--text); color: var(--text); }
+    .btn-save {
+      padding: .55rem 1.2rem;
+      background: var(--accent);
+      border: none;
+      color: #111;
+      font-weight: 600;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: background .15s;
+    }
+    .btn-save:hover { background: var(--accent2); }
+    .error-msg { font-size: .8rem; color: var(--danger); margin-top: .25rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <span class="header-eyebrow">ventas_db &rsaquo; tabla</span>
+        <h1 class="header-title">Distritos</h1>
+      </div>
+      <a href="nuevo.html" class="btn-nuevo">+ Nuevo</a>
+    </div>
+
+    <!-- Buscador -->
+    <div class="search-bar">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Buscar por ID, nombre o código postal…"
+        autocomplete="off"
+      />
+    </div>
+
+    <!-- Tabla -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre del Distrito</th>
+            <th>Cód. Postal</th>
+            <th>Alcalde</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr class="state-row"><td colspan="5"><span class="loading-dot">Cargando</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="pagination">
+      <span class="pagination-info" id="paginationInfo">—</span>
+      <div class="pagination-controls" id="paginationControls"></div>
+    </div>
+
+  </div>
+
+  <!-- Modal Editar -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal">
+      <h2>Editar Distrito</h2>
+      <input type="hidden" id="editId" />
+      <div class="form-group">
+        <label for="editNombre">Nombre del Distrito</label>
+        <input type="text" id="editNombre" maxlength="120" />
+        <span class="error-msg" id="editNombreErr"></span>
+      </div>
+      <div class="form-group">
+        <label for="editCodPostal">Código Postal</label>
+        <input type="text" id="editCodPostal" maxlength="10" />
+        <span class="error-msg" id="editCodErr"></span>
+      </div>
+
+
+
+<div class="form-group">
+  <label for="editAlcalde">Alcalde</label>
+  <input type="text" id="editAlcalde" maxlength="150" />
+</div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" id="btnCancelEdit">Cancelar</button>
+        <button class="btn-save"   id="btnSaveEdit">Guardar cambios</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast"></div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
